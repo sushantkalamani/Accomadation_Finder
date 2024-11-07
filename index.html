@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map with Save Location</title>
+    <title>Map with Save Location and Sidebar</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="map"></div>
     <button id="saveLocationBtn">Save Location</button>
+
+    <!-- Sidebar for displaying location information -->
+    <div id="sidebar">
+        <h2>Location Information</h2>
+        <p id="locationInfo">Click on a saved location to view details.</p>
+    </div>
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="main.js"></script> <!-- Link to your JavaScript file -->
+    <script src="main.js"></script>
 </body>
 </html>

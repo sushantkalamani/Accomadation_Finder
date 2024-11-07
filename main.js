@@ -26,11 +26,19 @@ function saveLocationToStorage(location) {
 // Retrieve saved locations from local storage and add them to the map
 const savedLocations = JSON.parse(localStorage.getItem('savedLocations')) || [];
 
-// Add a marker for each saved location
+// Function to show location info in the sidebar
+function showLocationInfo(location) {
+    document.getElementById('locationInfo').innerText = `Latitude: ${location.lat}\nLongitude: ${location.lng}\nAddress: ${location.address}`;
+    document.getElementById('sidebar').style.display = 'block';
+}
+
+// Add a marker for each saved location with click event to display sidebar info
 savedLocations.forEach(loc => {
-    L.marker([loc.lat, loc.lng]).addTo(map)
-        .bindPopup(`Saved Location: ${loc.address || 'No address saved'}`)
-        .openPopup();
+    const marker = L.marker([loc.lat, loc.lng]).addTo(map)
+        .bindPopup(`Saved Location: ${loc.address || 'No address saved'}`);
+
+    // Show location info in the sidebar when marker is clicked
+    marker.on('click', () => showLocationInfo(loc));
 });
 
 // Add a click event listener to the map to place a new pin
@@ -54,10 +62,12 @@ document.getElementById('saveLocationBtn').addEventListener('click', async funct
         saveLocationToStorage({ lat: location.lat, lng: location.lng, address: address });
         
         // Immediately add the saved location with the address to the map
-        L.marker([location.lat, location.lng]).addTo(map)
-            .bindPopup(`Saved Location: ${address}`)
-            .openPopup();
+        const marker = L.marker([location.lat, location.lng]).addTo(map)
+            .bindPopup(`Saved Location: ${address}`);
         
+        // Show location info in the sidebar when marker is clicked
+        marker.on('click', () => showLocationInfo({ lat: location.lat, lng: location.lng, address: address }));
+
         alert('Location and address saved!');
         
         currentPin = null; // Reset currentPin to allow for a new selection

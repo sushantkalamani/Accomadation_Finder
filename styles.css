@@ -1,16 +1,40 @@
 /* Set the map to cover the entire viewport */
 #map {
     height: 100vh; /* Full viewport height */
-    width: 100%;   /* Full width */
+    width: calc(100% - 250px); /* Leave space for sidebar */
     margin: 0;
     padding: 0;
+    float: right;
+}
+
+/* Sidebar styling */
+#sidebar {
+    width: 250px;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f7f7f7;
+    padding: 20px;
+    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+    display: block;
+    overflow-y: auto;
+}
+
+#sidebar h2 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+#locationInfo {
+    white-space: pre-wrap; /* Allows multiline display */
 }
 
 /* Style for the save button */
 #saveLocationBtn {
     position: absolute;
     top: 20px;
-    left: 20px;
+    left: 270px; /* Adjusted to stay to the right of the sidebar */
     padding: 10px 20px;
     background-color: #28a745;
     color: #fff;
