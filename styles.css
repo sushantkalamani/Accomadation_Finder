@@ -1,0 +1,24 @@
+/* Set the body and html to have no margins and full height */
+html, body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+/* Set the map to take the full height and width of the window */
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+/* Style for the button */
+#saveLocationBtn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000; /* Ensure the button is above the map */
+    padding: 10px 15px;
+    background-color: white;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
