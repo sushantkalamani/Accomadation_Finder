@@ -1,24 +1,25 @@
-/* Set the body and html to have no margins and full height */
-html, body {
-    margin: 0;
-    height: 100%;
-    width: 100%;
-}
-
-/* Set the map to take the full height and width of the window */
+/* Set the map to cover the entire viewport */
 #map {
-    height: 100%;
-    width: 100%;
+    height: 100vh; /* Full viewport height */
+    width: 100%;   /* Full width */
+    margin: 0;
+    padding: 0;
 }
 
-/* Style for the button */
+/* Style for the save button */
 #saveLocationBtn {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1000; /* Ensure the button is above the map */
-    padding: 10px 15px;
-    background-color: white;
-    border: 1px solid #ccc;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
+    z-index: 1000;
+}
+
+#saveLocationBtn:hover {
+    background-color: #218838;
 }
