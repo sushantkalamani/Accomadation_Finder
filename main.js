@@ -1,3 +1,5 @@
+
+
 // Initialize the map and set its view
 var map = L.map('map').setView([40.7128, -74.0060], 13);
 
@@ -6,15 +8,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Variable to hold the current pin
-let currentPin = null;
 
-// Function to get the address for a location using reverse geocoding
-async function getAddress(lat, lng) {
-    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
-    const data = await response.json();
-    return data.display_name || 'Unknown address';
-}
+let currentPin = null;
 
 // Function to save the current pinned location to local storage
 function saveLocationToStorage(location) {
@@ -29,7 +24,7 @@ const savedLocations = JSON.parse(localStorage.getItem('savedLocations')) || [];
 // Add a marker for each saved location
 savedLocations.forEach(loc => {
     L.marker([loc.lat, loc.lng]).addTo(map)
-        .bindPopup(`Saved Location: ${loc.address || 'No address saved'}`)
+        .bindPopup('Saved Location')
         .openPopup();
 });
 
@@ -47,21 +42,53 @@ map.on('click', function(e) {
 });
 
 // Add a click event listener to the save button
-document.getElementById('saveLocationBtn').addEventListener('click', async function() {
-    if (currentPin) {
-        const location = currentPin.getLatLng();
-        const address = await getAddress(location.lat, location.lng); // Get address
-        saveLocationToStorage({ lat: location.lat, lng: location.lng, address: address });
-        
-        // Immediately add the saved location with the address to the map
-        L.marker([location.lat, location.lng]).addTo(map)
-            .bindPopup(`Saved Location: ${address}`)
-            .openPopup();
-        
-        alert('Location and address saved!');
-        
-        currentPin = null; // Reset currentPin to allow for a new selection
-    } else {
-        alert('No location to save!');
+document.getElementById('saveLocationBtn').addEventListener('click', function() {
+  if (currentPin) {
+      const location = currentPin.getLatLng();
+      saveLocationToStorage({ lat: location.lat, lng: location.lng });
+      
+      // Immediately add the saved location to the map
+      L.marker([location.lat, location.lng]).addTo(map)
+          .bindPopup('Saved Location')
+          .on('click', () => openSidebar({ lat: location.lat, lng: location.lng })); // Added click event for sidebar
+
+      alert('Location saved!');
+
+      // Reset currentPin to allow for a new selection
+      currentPin = null;
+  } else {
+      alert('No location to save!');
+  }
+});
+
+
+// ----sidebar
+
+// Reference to the sidebar
+const sidebar = document.getElementById('sidebar');
+const locationInfo = document.getElementById('locationInfo');
+
+// Function to open the sidebar with location details
+function openSidebar(location) {
+    sidebar.classList.add('active');
+    locationInfo.textContent = `Latitude: ${location.lat}, Longitude: ${location.lng}`;
+}
+
+// Function to close the sidebar
+function closeSidebar() {
+    sidebar.classList.remove('active');
+}
+
+// Close the sidebar if clicked outside (optional)
+document.addEventListener('click', function(event) {
+    if (!sidebar.contains(event.target) && !event.target.matches('.leaflet-marker-icon')) {
+        closeSidebar();
     }
+});
+
+// Add a marker for each saved location with a click listener
+savedLocations.forEach(loc => {
+    const marker = L.marker([loc.lat, loc.lng]).addTo(map)
+        .bindPopup('Saved Location')
+        .on('click', () => openSidebar(loc)); // Open sidebar on marker click
 });
