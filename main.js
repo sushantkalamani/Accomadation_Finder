@@ -9,6 +9,13 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Variable to hold the current pin
 let currentPin = null;
 
+// Function to get the address for a location using reverse geocoding
+async function getAddress(lat, lng) {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+    const data = await response.json();
+    return data.display_name || 'Unknown address';
+}
+
 // Function to save the current pinned location to local storage
 function saveLocationToStorage(location) {
     const savedLocations = JSON.parse(localStorage.getItem('savedLocations')) || [];
@@ -22,7 +29,7 @@ const savedLocations = JSON.parse(localStorage.getItem('savedLocations')) || [];
 // Add a marker for each saved location
 savedLocations.forEach(loc => {
     L.marker([loc.lat, loc.lng]).addTo(map)
-        .bindPopup('Saved Location')
+        .bindPopup(`Saved Location: ${loc.address || 'No address saved'}`)
         .openPopup();
 });
 
@@ -40,19 +47,19 @@ map.on('click', function(e) {
 });
 
 // Add a click event listener to the save button
-document.getElementById('saveLocationBtn').addEventListener('click', function() {
+document.getElementById('saveLocationBtn').addEventListener('click', async function() {
     if (currentPin) {
         const location = currentPin.getLatLng();
-        saveLocationToStorage({ lat: location.lat, lng: location.lng });
+        const address = await getAddress(location.lat, location.lng); // Get address
+        saveLocationToStorage({ lat: location.lat, lng: location.lng, address: address });
         
-        // Immediately add the saved location to the map
+        // Immediately add the saved location with the address to the map
         L.marker([location.lat, location.lng]).addTo(map)
-            .bindPopup('Saved Location')
+            .bindPopup(`Saved Location: ${address}`)
             .openPopup();
         
-        alert('Location saved!');
-
-        // Allow the user to select another location by resetting the currentPin
+        alert('Location and address saved!');
+        
         currentPin = null; // Reset currentPin to allow for a new selection
     } else {
         alert('No location to save!');
