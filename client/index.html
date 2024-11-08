@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginFormContainer" class="form-container">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="loginUser(event)">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" required><br>
+
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" required><br>
+
+                <button type="submit">Login</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">New user? <a href="#">Register here</a></p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerFormContainer" class="form-container hidden">
+            <h2>Register</h2>
+            <form id="registerForm" onsubmit="registerUser(event)">
+                <label for="registerUsername">Username:</label>
+                <input type="text" id="registerUsername" required><br>
+
+                <label for="registerPassword">Password:</label>
+                <input type="password" id="registerPassword" required><br>
+
+                <button type="submit">Register</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">Already have an account? <a href="#">Login here</a></p>
+        </div>
+
+        <p id="message"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

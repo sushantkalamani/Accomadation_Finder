@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <link rel="stylesheet" href="welcome.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <div class="welcome-container">
+        <h1>Welcome to Your Dashboard</h1>
+        <p>You have successfully logged in!</p>
+        <button onclick="logout()">Logout</button>
+        <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+        <button onclick="saveLocation()">Save Location</button>
+    </div>
+    <script src="welcome.js"></script>
+</body>
+
+</html>
