@@ -46,3 +46,4 @@ async function loginUser(event) {
         window.location.href = "welcome.html"; // Redirect to the welcome page
     }
 }
+

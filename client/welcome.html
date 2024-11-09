@@ -1,24 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Page</title>
+    <title>Map with Save Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="welcome.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
-
 <body>
-    <div class="welcome-container">
-        <h1>Welcome to Your Dashboard</h1>
-        <p>You have successfully logged in!</p>
-        <button onclick="logout()">Logout</button>
-        <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
-        <button onclick="saveLocation()">Save Location</button>
+    <div id="map"></div>
+    <!-- <button id="saveLocationBtn">Save Location</button> -->
+    <div class="sidebar" id="sidebar">
+        <h2>Enter Details</h2>
+        <form id="detailsForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+    
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+    
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+    
+            <button type="submit">Save Details</button>
+        </form>
     </div>
-    <script src="welcome.js"></script>
-</body>
 
+    <div id="map"></div>
+    <button id="registerHomeBtn">Register Home</button>
+    <button id="saveLocationBtn">Save Location</button>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="welcome.js"></script> <!-- Link to your JavaScript file -->
+</body>
 </html>
