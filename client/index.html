@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,7 +10,7 @@
 
 <body>
     <div class="container">
-        <!-- Login Form -->
+    
         <div id="loginFormContainer" class="form-container">
             <h2>Login</h2>
             <form id="loginForm" onsubmit="loginUser(event)">
@@ -25,7 +25,7 @@
             <p class="toggle-link" onclick="toggleForms()">New user? <a href="#">Register here</a></p>
         </div>
 
-        <!-- Register Form -->
+
         <div id="registerFormContainer" class="form-container hidden">
             <h2>Register</h2>
             <form id="registerForm" onsubmit="registerUser(event)">
@@ -34,6 +34,58 @@
 
                 <label for="registerPassword">Password:</label>
                 <input type="password" id="registerPassword" required><br>
+
+                <button type="submit">Register</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">Already have an account? <a href="#">Login here</a></p>
+        </div>
+
+        <p id="message"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register Form</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginFormContainer" class="form-container">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="loginUser(event)">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" placeholder="Enter your username" required>
+
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+
+                <button type="submit">Login</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">New user? <a href="#">Register here</a></p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerFormContainer" class="form-container hidden">
+            <h2>Register</h2>
+            <form id="registerForm" onsubmit="registerUser(event)">
+                <label for="registerUsername">Username:</label>
+                <input type="text" id="registerUsername" placeholder="Choose a username" required>
+
+                <label for="registerPassword">Password:</label>
+                <input type="password" id="registerPassword" placeholder="Create a password" required>
 
                 <button type="submit">Register</button>
             </form>

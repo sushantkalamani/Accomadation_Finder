@@ -1,100 +1,86 @@
-/* Set the body and html to have no margins and full height */
-html, body {
+/* Basic reset for margins and padding */
+* {
     margin: 0;
-    height: 100%;
-    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Set the map to take the full height and width of the window */
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Map container */
 #map {
-    height: 100%;
-    width: 100%;
-}
-
-/* Style for the button */
-#saveLocationBtn {
-    position: absolute;
-    bottom: 10px; /* Position at the bottom */
-    left: 10px;   /* Align to the left */
-    z-index: 1002; /* Ensure the button stays above the map and sidebar */
-    padding: 10px 15px;
-    background-color: white;
-    border: 1px solid #ccc;
-    cursor: pointer;
+    height: 690px; /* Set the height of the map */
+    width: 100%; /* Full width */
 }
 
 /* Sidebar styling */
 .sidebar {
-    position: absolute;
-    top: 0;
-    right: -300px; /* Initially hidden off-screen */
-    width: 300px;
-    height: 100%;
-    background-color: white;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-    padding: 20px;
-    transition: right 0.3s;
-    z-index: 1001; /* Above the map */
-}
-
-.sidebar.active {
-    right: 0; /* Slide in when active */
-}
-/* Style for the register home button */
-#registerHomeBtn {
-    position: absolute; /* Positioning relative to the body */
-    bottom: 50px; /* Position above the save location button */
-    left: 10px; /* Align to the left */
-    z-index: 1002; /* Ensure the button stays above the map and sidebar */
-    padding: 10px 15px; /* Padding for the button */
-    background-color: #28a745; /* Green background color */
-    color: white; /* White text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Change cursor to pointer */
-    font-size: 16px; /* Font size for better readability */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a slight shadow for depth */
-    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
-}
-
-/* Hover effect for the register home button */
-#registerHomeBtn:hover {
-    background-color: #218838; /* Darker green on hover */
-    transform: translateY(-2px); /* Slight lift effect on hover */
-}
-
-/* Active state for the button */
-#registerHomeBtn:active {
-    transform: translateY(0); /* Reset lift effect when clicked */
-}
-/* Sidebar form styling */
-#detailsForm {
-    display: flex;
-    flex-direction: column; /* Arrange items vertically */
-    gap: 10px; /* Space between elements */
-}
-
-#detailsForm label {
-    font-weight: bold; /* Make labels bold */
-}
-
-#detailsForm input,
-#detailsForm textarea {
-    padding: 10px; /* Add padding for input fields */
+    position: absolute; /* Fixed position to overlay on the map */
+    top: 10px; /* Distance from the top */
+    right: 10px; /* Distance from the right */
+    width: 300px; /* Fixed width */
+    background: white; /* Background color */
     border: 1px solid #ccc; /* Border styling */
     border-radius: 5px; /* Rounded corners */
-    font-size: 14px; /* Font size for readability */
+    padding: 15px; /* Padding inside the sidebar */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    display: none; /* Initially hidden */
+    z-index: 1000; /* Ensure it's above the map */
 }
 
-#detailsForm button {
-    background-color: #007bff; /* Button color */
-    color: white; /* Text color */
+/* Active class for the sidebar */
+.sidebar.active {
+    display: block; /* Show sidebar when active */
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+}
+
+/* Input fields and textarea styling */
+input[type="text"],
+textarea {
+    margin-bottom: 10px; /* Space between fields */
+    padding: 10px; /* Padding inside fields */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Button styling */
+button {
+    padding: 10px; /* Padding inside buttons */
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */
-    padding: 10px; /* Padding for button */
-    cursor: pointer; /* Change cursor to pointer */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
-#detailsForm button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+/* Button hover effect */
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Heading styling */
+h2 {
+    margin-bottom: 15px; /* Space below the heading */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #map {
+        height: 300px; /* Adjust map height for smaller screens */
+    }
+
+    .sidebar {
+        width: 90%; /* Full width for smaller screens */
+        right: 5%; /* Center the sidebar */
+    }
 }
