@@ -90,7 +90,6 @@ document.getElementById('registerHomeBtn').addEventListener('click', function() 
     }
 });
 
-// Handle form submission to save details and location
 document.getElementById('detailsForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const name = document.getElementById('name').value.trim();
