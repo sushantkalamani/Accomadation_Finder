@@ -129,6 +129,7 @@ document.getElementById('detailsForm').addEventListener('submit', function(event
     });
 });
 
+
 // Function to add a marker to the map
 function addMarkerToMap(data) {
     let marker = L.marker([data.lat, data.lng]).addTo(map);
@@ -147,5 +148,29 @@ function addMarkerToMap(data) {
     markers.push(marker);
 }
 
+
+
+
 // Initialize saved markers on page load
 addSavedMarkers();
+
+
+// btnsavelocation
+document.getElementById('saveLocationBtn').addEventListener('click', function() {
+    if (currentPin) {
+        const location = currentPin.getLatLng();
+        saveLocationToStorage({ lat: location.lat, lng: location.lng });
+        
+        // Immediately add the saved location to the map
+        L.marker([location.lat, location.lng]).addTo(map)
+            .bindPopup('Saved Location')
+            .on('click', () => openSidebar({ lat: location.lat, lng: location.lng })); // Added click event for sidebar
+  
+        alert('Location saved!');
+  
+        // Reset currentPin to allow for a new selection
+        currentPin = null;
+    } else {
+        alert('No location to save!');
+    }
+  });
