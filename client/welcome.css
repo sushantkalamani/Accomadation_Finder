@@ -1,0 +1,126 @@
+/* Basic reset for margins and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Map container */
+#map {
+    height: 650px; /* Set the height of the map */
+    width: 100%; /* Full width */
+}
+
+/* registerbar styling */
+.registerbar {
+    position: absolute; /* Fixed position to overlay on the map */
+    top: 10px; /* Distance from the top */
+    right: 10px; /* Distance from the right */
+    width: 350px; /* Increased width for the registerbar */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 5px; /* Rounded corners */
+    padding: 20px; /* Increased padding inside the registerbar */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    display: none; /* Initially hidden */
+    z-index: 1000; /* Ensure it's above the map */
+}
+
+/* Active class for the registerbar */
+.registerbar.active {
+    display: block; /* Show registerbar when active */
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+}
+
+/* Input fields and textarea styling */
+input[type="text"],
+input[type="number"],
+textarea {
+    margin-bottom: 15px; /* Space between fields */
+    padding: 12px; /* Increased padding inside fields */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 5px; /* Rounded corners */
+    width: 100%; /* Full width for all inputs */
+}
+
+/* Button styling */
+button {
+    padding: 12px; /* Increased padding inside buttons */
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Heading styling */
+h2 {
+    margin-bottom: 15px; /* Space below the heading */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #map {
+        height: 300px; /* Adjust map height for smaller screens */
+    }
+
+    .registerbar {
+        width: 90%; /* Full width for smaller screens */
+        right: 5%; /* Center the registerbar */
+    }
+}
+
+/* search */
+#searchContainer {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    z-index: 1000;
+    display: flex; /* Align items in a row */
+    background-color: transparent;
+    border-radius: 8px; /* Rounded corners for container */
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); Optional shadow for depth */
+    overflow: hidden; /* Ensure rounded corners apply to children */
+}
+
+#locationSearch {
+    flex: 1; /* Takes up remaining space */
+    padding: 8px;
+    border: none; /* Remove inner border */
+    outline: none;
+}
+
+#searchButton {
+    padding: 8px; /* Set vertical padding to 8px */
+    padding-left: 16px; /* Set left padding to 16px */
+    padding-right: 16px; /* Set right padding to 16px */
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 100%; /* Make the button take the full height of the parent container */
+}
+
+#searchButton:hover {
+    background-color: #218838; /* Darker green on hover */
+}
