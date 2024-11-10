@@ -17,24 +17,24 @@ body {
     width: 100%; /* Full width */
 }
 
-/* Sidebar styling */
-.sidebar {
+/* registerbar styling */
+.registerbar {
     position: absolute; /* Fixed position to overlay on the map */
     top: 10px; /* Distance from the top */
     right: 10px; /* Distance from the right */
-    width: 300px; /* Fixed width */
+    width: 350px; /* Increased width for the registerbar */
     background: white; /* Background color */
     border: 1px solid #ccc; /* Border styling */
     border-radius: 5px; /* Rounded corners */
-    padding: 15px; /* Padding inside the sidebar */
+    padding: 20px; /* Increased padding inside the registerbar */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
     display: none; /* Initially hidden */
     z-index: 1000; /* Ensure it's above the map */
 }
 
-/* Active class for the sidebar */
-.sidebar.active {
-    display: block; /* Show sidebar when active */
+/* Active class for the registerbar */
+.registerbar.active {
+    display: block; /* Show registerbar when active */
 }
 
 /* Form styling */
@@ -45,16 +45,18 @@ form {
 
 /* Input fields and textarea styling */
 input[type="text"],
+input[type="number"],
 textarea {
-    margin-bottom: 10px; /* Space between fields */
-    padding: 10px; /* Padding inside fields */
+    margin-bottom: 15px; /* Space between fields */
+    padding: 12px; /* Increased padding inside fields */
     border: 1px solid #ccc; /* Border styling */
     border-radius: 5px; /* Rounded corners */
+    width: 100%; /* Full width for all inputs */
 }
 
 /* Button styling */
 button {
-    padding: 10px; /* Padding inside buttons */
+    padding: 12px; /* Increased padding inside buttons */
     background-color: #28a745; /* Green background */
     color: white; /* White text */
     border: none; /* Remove border */
@@ -79,8 +81,8 @@ h2 {
         height: 300px; /* Adjust map height for smaller screens */
     }
 
-    .sidebar {
+    .registerbar {
         width: 90%; /* Full width for smaller screens */
-        right: 5%; /* Center the sidebar */
+        right: 5%; /* Center the registerbar */
     }
 }

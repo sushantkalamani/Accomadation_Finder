@@ -31,23 +31,23 @@ function addSavedMarkers() {
     });
 }
 
-// Function to open the sidebar with location details
+// Function to open the registerbar with location details
 function openSidebar(location) {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.add('active');
+    const registerbar = document.getElementById('registerbar');
+    registerbar.classList.add('active');
     document.getElementById('locationInfo').textContent = `Latitude: ${location.lat}, Longitude: ${location.lng}`;
 }
 
-// Function to close the sidebar
+// Function to close the registerbar
 function closeSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.remove('active');
+    const registerbar = document.getElementById('registerbar');
+    registerbar.classList.remove('active');
 }
 
-// Close the sidebar if clicked outside
+// Close the registerbar if clicked outside
 document.addEventListener('click', function(event) {
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar.contains(event.target) && !event.target.matches('.leaflet-marker-icon')) {
+    const registerbar = document.getElementById('registerbar');
+    if (!registerbar.contains(event.target) && !event.target.matches('.leaflet-marker-icon')) {
         closeSidebar();
     }
 });
@@ -75,16 +75,16 @@ function enablePinning() {
 // Add a click event listener to the register home button
 document.getElementById('registerHomeBtn').addEventListener('click', function() {
     isRegistering = !isRegistering;
-    const sidebar = document.getElementById('sidebar');
+    const registerbar = document.getElementById('registerbar');
 
     if (isRegistering) {
         alert('Pinning is now enabled. Click on the map to select a location.');
         enablePinning();
-        sidebar.style.display = 'block';
+        registerbar.style.display = 'block';
     } else {
         alert('Pinning is now disabled. Click on saved locations to view details.');
         disablePinning();
-        sidebar.style.display = 'none';
+        registerbar.style.display = 'none';
         markers.forEach(marker => map.removeLayer(marker));
         addSavedMarkers();
     }
@@ -164,7 +164,7 @@ document.getElementById('saveLocationBtn').addEventListener('click', function() 
         // Immediately add the saved location to the map
         L.marker([location.lat, location.lng]).addTo(map)
             .bindPopup('Saved Location')
-            .on('click', () => openSidebar({ lat: location.lat, lng: location.lng })); // Added click event for sidebar
+            .on('click', () => openSidebar({ lat: location.lat, lng: location.lng })); // Added click event for registerbar
   
         alert('Location saved!');
   
