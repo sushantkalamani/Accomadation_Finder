@@ -84,3 +84,41 @@ h2 {
         right: 5%; /* Center the sidebar */
     }
 }
+
+/* search */
+#searchContainer {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    z-index: 1000;
+    display: flex; /* Align items in a row */
+    background-color: transparent;
+    border-radius: 8px; /* Rounded corners for container */
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); Optional shadow for depth */
+    overflow: hidden; /* Ensure rounded corners apply to children */
+}
+
+#locationSearch {
+    flex: 1; /* Takes up remaining space */
+    padding: 8px;
+    border: none; /* Remove inner border */
+    outline: none;
+}
+
+#searchButton {
+    padding: 8px; /* Set vertical padding to 8px */
+    padding-left: 16px; /* Set left padding to 16px */
+    padding-right: 16px; /* Set right padding to 16px */
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 100%; /* Make the button take the full height of the parent container */
+}
+
+#searchButton:hover {
+    background-color: #218838; /* Darker green on hover */
+}

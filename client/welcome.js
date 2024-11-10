@@ -174,3 +174,28 @@ document.getElementById('saveLocationBtn').addEventListener('click', function() 
         alert('No location to save!');
     }
   });
+
+  //Search
+  document.getElementById('searchButton').addEventListener('click', function() {
+    const location = document.getElementById('locationSearch').value.trim();
+    if (location) {
+        // Fetch coordinates from Nominatim Geocoding API
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const { lat, lon } = data[0];
+                    map.setView([lat, lon], 13);  // Redirect map to the searched location
+                    L.marker([lat, lon]).addTo(map)  // Add a marker at the searched location
+                        .bindPopup(`<strong>${location}</strong>`)
+                        .openPopup();
+                } else {
+                    alert('Location not found');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    } else {
+        alert('Please enter a location');
+    }
+});
+
