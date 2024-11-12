@@ -21,15 +21,41 @@ function saveLocationToStorage(location) {
 // Retrieve saved locations from local storage and add them to the map
 const savedLocations = JSON.parse(localStorage.getItem('savedLocations')) || [];
 
-// Function to add markers for saved locations
+// *Function to add markers for saved locations
 function addSavedMarkers() {
     savedLocations.forEach(loc => {
-        const marker = L.marker([loc.lat, loc.lng]).addTo(map)
-            .bindPopup('Saved Location')
-            .on('click', () => openregisterbar(loc));
+        const marker = L.marker([loc.lat, loc.lng]).addTo(map);
+        marker.on('click', () => openModalWithDetails(loc));
         markers.push(marker);
     });
 }
+// popup
+// Function to open the modal and populate it with location details
+function openModalWithDetails(location) {
+    document.getElementById('modalName').textContent = location.name;
+    document.getElementById('modalAddress').textContent = location.address;
+    document.getElementById('modalRent').textContent = location.rent;
+    document.getElementById('modalContact').textContent = location.contact;
+    document.getElementById('modalRooms').textContent = location.rooms;
+    document.getElementById('modalBed').textContent = location.bed;
+    
+    // Display the modal
+    document.getElementById('infoModal').style.display = 'block';
+}
+
+// Close the modal when the user clicks the "X" button
+document.querySelector('.close-modal').addEventListener('click', function() {
+    document.getElementById('infoModal').style.display = 'none';
+});
+
+// Optional: Close the modal when clicking outside the modal content
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('infoModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+});
+
 
 // Function to open the registerbar with location details
 function openregisterbar(location) {
@@ -44,7 +70,6 @@ function closeregisterbar() {
     registerbar.classList.remove('active');
 }
 
-// Close the registerbar if clicked outside
 // Close the registerbar if clicked outside
 document.addEventListener('click', function(event) {
     const registerbar = document.getElementById('registerbar');
@@ -77,24 +102,20 @@ function enablePinning() {
 document.getElementById('registerHomeBtn').addEventListener('click', function() {
     isRegistering = !isRegistering;
     const registerbar = document.getElementById('registerbar');
-    const registerbar = document.getElementById('registerbar');
 
     if (isRegistering) {
         alert('Pinning is now enabled. Click on the map to select a location.');
         enablePinning();
         registerbar.style.display = 'block';
-        registerbar.style.display = 'block';
     } else {
         alert('Pinning is now disabled. Click on saved locations to view details.');
         disablePinning();
-        registerbar.style.display = 'none';
         registerbar.style.display = 'none';
         markers.forEach(marker => map.removeLayer(marker));
         addSavedMarkers();
     }
 });
 
-// Handle form submission to save details and location
 document.getElementById('detailsForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const name = document.getElementById('name').value.trim();
