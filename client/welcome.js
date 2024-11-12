@@ -45,6 +45,7 @@ function closeregisterbar() {
 }
 
 // Close the registerbar if clicked outside
+// Close the registerbar if clicked outside
 document.addEventListener('click', function(event) {
     const registerbar = document.getElementById('registerbar');
     if (!registerbar.contains(event.target) && !event.target.matches('.leaflet-marker-icon')) {
@@ -76,14 +77,17 @@ function enablePinning() {
 document.getElementById('registerHomeBtn').addEventListener('click', function() {
     isRegistering = !isRegistering;
     const registerbar = document.getElementById('registerbar');
+    const registerbar = document.getElementById('registerbar');
 
     if (isRegistering) {
         alert('Pinning is now enabled. Click on the map to select a location.');
         enablePinning();
         registerbar.style.display = 'block';
+        registerbar.style.display = 'block';
     } else {
         alert('Pinning is now disabled. Click on saved locations to view details.');
         disablePinning();
+        registerbar.style.display = 'none';
         registerbar.style.display = 'none';
         markers.forEach(marker => map.removeLayer(marker));
         addSavedMarkers();
