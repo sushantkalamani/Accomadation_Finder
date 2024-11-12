@@ -29,6 +29,7 @@ function addSavedMarkers() {
         markers.push(marker);
     });
 }
+
 // popup
 // Function to open the modal and populate it with location details
 function openModalWithDetails(location) {
@@ -56,21 +57,20 @@ window.addEventListener('click', function(event) {
     }
 });
 
-
-// Function to open the registerbar with location details
+// Function to open the register bar with location details
 function openregisterbar(location) {
     const registerbar = document.getElementById('registerbar');
     registerbar.classList.add('active');
     document.getElementById('locationInfo').textContent = `Latitude: ${location.lat}, Longitude: ${location.lng}`;
 }
 
-// Function to close the registerbar
+// Function to close the register bar
 function closeregisterbar() {
     const registerbar = document.getElementById('registerbar');
     registerbar.classList.remove('active');
 }
 
-// Close the registerbar if clicked outside
+// Close the register bar if clicked outside
 document.addEventListener('click', function(event) {
     const registerbar = document.getElementById('registerbar');
     if (!registerbar.contains(event.target) && !event.target.matches('.leaflet-marker-icon')) {
@@ -116,111 +116,120 @@ document.getElementById('registerHomeBtn').addEventListener('click', function() 
     }
 });
 
-document.getElementById('detailsForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const description = document.getElementById('description').value.trim();
-
-    if (!name || !address) {
-        alert('Name and Address are required fields.');
-        return;
-    }
-
-    fetch('/save-location', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            lat: selectedLocation.lat,
-            lng: selectedLocation.lng,
-            name: name,
-            address: address,
-            description: description
-        })
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    }).then(data => {
-        alert('Location saved!');
-        closeregisterbar();
-        addMarkerToMap(data);
-        saveLocationToStorage({ lat: data.lat, lng: data.lng, name, address, description });
-    }).catch(error => {
-        alert('There was a problem saving the location: ' + error.message);
-    });
-});
-
 
 // Function to add a marker to the map
 function addMarkerToMap(data) {
     let marker = L.marker([data.lat, data.lng]).addTo(map);
-    marker.bindPopup(`<strong>${data.name}</strong><br>${data.address}<br>${data.description}`);
-    
+    marker.bindPopup(`<strong>${data.name}</strong><br>${data.address}<br>Rent: ${data.rent}`);
+
     marker.on('click', function() {
-        fetch(`/get-location/${data.id}`)
+        fetch(`http://localhost:3000/get-location/${data.id}`)
             .then(response => response.json())
             .then(details => {
                 openregisterbar(details);
                 document.getElementById('name').value = details.name;
                 document.getElementById('address').value = details.address;
-                document.getElementById('description').value = details.description;
+                document.getElementById('rent').value = details.rent;
+                document.getElementById('contact').value = details.contact;
+                document.getElementById('rooms').value = details.rooms;
+                document.getElementById('bed').value = details.bed;
             });
     });
     markers.push(marker);
 }
 
-
-
-
 // Initialize saved markers on page load
 addSavedMarkers();
 
+// Save location button click event
+document.getElementById('saveLocationBtn').addEventListener('click', async function() {
+    if (!selectedLocation) {
+        alert('Please select a location on the map first!');
+        return;
+    }
 
-// btnsavelocation
-document.getElementById('saveLocationBtn').addEventListener('click', function() {
-    if (currentPin) {
-        const location = currentPin.getLatLng();
-        saveLocationToStorage({ lat: location.lat, lng: location.lng });
-        
-        // Immediately add the saved location to the map
-        L.marker([location.lat, location.lng]).addTo(map)
-            .bindPopup('Saved Location')
-            .on('click', () => openregisterbar({ lat: location.lat, lng: location.lng })); // Added click event for registerbar
-  
-        alert('Location saved!');
-  
-        // Reset currentPin to allow for a new selection
-        currentPin = null;
-    } else {
-        alert('No location to save!');
-    }
-  });
+    // Retrieve the form input values
+    const name = document.getElementById('name').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const rent = document.getElementById('rent').value.trim();
+    const contact = document.getElementById('contact').value.trim();
+    const rooms = document.getElementById('rooms').value.trim();
+    const bed = document.getElementById('bed').value.trim();
 
-  //Search
-  document.getElementById('searchButton').addEventListener('click', function() {
-    const location = document.getElementById('locationSearch').value.trim();
-    if (location) {
-        // Fetch coordinates from Nominatim Geocoding API
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.length > 0) {
-                    const { lat, lon } = data[0];
-                    map.setView([lat, lon], 13);  // Redirect map to the searched location
-                    L.marker([lat, lon]).addTo(map)  // Add a marker at the searched location
-                        .bindPopup(`<strong>${location}</strong>`)
-                        .openPopup();
-                } else {
-                    alert('Location not found');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    } else {
-        alert('Please enter a location');
+    // Validate required fields
+    if (!name || !address || !rent || !contact || !rooms || !bed) {
+        alert('All fields are required.');
+        return;
+    }
+
+    // Prepare the location data to be sent to the server
+    const locationData = {
+        lat: selectedLocation.lat,
+        lng: selectedLocation.lng,
+        name: name,
+        address: address,
+        rent: rent,
+        contact: contact,
+        rooms: rooms,
+        bed: bed
+    };
+    console.log(locationData.lat);
+    console.log(locationData.lng);
+
+    try {
+        // Send the location data to the server via a POST request
+        const response = await fetch('http://localhost:3000/save-location', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(locationData)
+        });
+
+        // Handle server response
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        alert('Location saved successfully!');
+
+        // Close the register bar
+        closeregisterbar();
+
+        // Add the new location to local storage
+        saveLocationToStorage({
+            ...locationData,
+            id: data.id // Add the ID from the server response
+        });
+
+        // Add the new marker to the map with the correct details
+        addMarkerToMap(data);
+
+    } catch (error) {
+        console.error('Error saving location:', error);
+        alert('There was a problem saving the location: ' + error.message);
     }
 });
 
+// Search functionality
+document.getElementById('searchButton').addEventListener('click', function() {
+    const location = document.getElementById('locationSearch').value.trim();
+    if (location) {
+        // Fetch coordinates from Nominatim Geocoding API
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length) {
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+                    map.setView([lat, lon], 13);
+                } else {
+                    alert('Location not found!');
+                }
+            })
+            .catch(error => {
+                alert('Error searching location: ' + error.message);
+            });
+    }
+});

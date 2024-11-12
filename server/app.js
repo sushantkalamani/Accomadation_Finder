@@ -10,12 +10,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Register endpoint (without password hashing)
-app.post('http://localhost:3000/register', async (req, res) => {
+app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const [existingUser] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
-        if (existingUser.length > 0) {
+        const [existingUsers] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+        if (existingUsers.length > 0) {
             return res.status(400).json({ message: 'Username already exists. Please choose another.' });
         }
 
@@ -28,12 +28,12 @@ app.post('http://localhost:3000/register', async (req, res) => {
 });
 
 // Login endpoint
-app.post('http://localhost:3000/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const [user] = await db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
-        if (user.length === 0) {
+        const [users] = await db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
+        if (users.length === 0) {
             return res.status(400).json({ message: 'Invalid username or password.' });
         }
 
@@ -44,27 +44,32 @@ app.post('http://localhost:3000/login', async (req, res) => {
     }
 });
 
-app.post('http://localhost:3000/save-location', async (req, res) => {
-    const { latitude, longitude, name, address, description } = req.body;
-
+app.post('/save-location', async (req, res) => {
     try {
-        // Insert the location into the database with additional fields
+        const { lat, lng, name, address, rent, contact, rooms, bed } = req.body;
+
+        // Validate input data
+        if (!lat || !lng || !name || !address || !rent || !contact || !rooms || !bed) {
+            return res.status(400).json({ message: 'All fields are required.' });
+        }
+
+        // Save location to the database
         const result = await db.query(
-            'INSERT INTO locations (latitude, longitude, name, address, description) VALUES (?, ?, ?, ?, ?)',
-            [latitude, longitude, name, address, description]
+            'INSERT INTO locations (latitude, longitude, name, address, rent, contact, rooms, bed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [lat, lng, name, address, rent, contact, rooms, bed]
         );
 
-        // Respond with the ID of the newly created location
-        res.status(201).json({ 
-            message: 'Location saved successfully!', 
-            id: result.insertId, // Assuming result.insertId contains the ID of the new record
-            location: {
-                latitude,
-                longitude,
-                name,
-                address,
-                description
-            }
+        // Send back the saved location
+        res.status(201).json({
+            id: result.insertId,
+            lat,
+            lng,
+            name,
+            address,
+            rent,
+            contact,
+            rooms,
+            bed
         });
     } catch (error) {
         console.error(error);
@@ -72,8 +77,9 @@ app.post('http://localhost:3000/save-location', async (req, res) => {
     }
 });
 
+
 // Fetch all saved locations
-app.get('http://localhost:3000/locations', async (req, res) => {
+app.get('/locations', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT latitude, longitude FROM locations');
         res.status(200).json(rows);
@@ -84,20 +90,35 @@ app.get('http://localhost:3000/locations', async (req, res) => {
 });
 
 // Get location details by ID
-app.get('http://localhost:3000/get-location/:id', async (req, res) => {
+app.get('/get-location/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const [location] = await db.query('SELECT * FROM locations WHERE id = ?', [id]);
-        if (location.length === 0) {
+        const [locations] = await db.query('SELECT * FROM locations WHERE id = ?', [id]);
+        
+        if (!locations || locations.length === 0) {
             return res.status(404).json({ message: 'Location not found.' });
         }
-        res.status(200).json(location[0]);
+
+        // The details object is returned here, matching what is expected on the client-side
+        const location = locations[0];
+        res.status(200).json({
+            id: location.id,
+            name: location.name,
+            address: location.address,
+            rent: location.rent,
+            contact: location.contact,
+            rooms: location.rooms,
+            bed: location.bed,
+            latitude: location.latitude,
+            longitude: location.longitude
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'An error occurred while fetching the location.' });
+        console.error('Error fetching location:', error);
+        res.status(500).json({ message: 'An error occurred while fetching the location.', error: error.message });
     }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
