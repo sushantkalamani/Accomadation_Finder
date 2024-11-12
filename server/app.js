@@ -10,12 +10,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Register endpoint (without password hashing)
-app.post('http://localhost:3000/register', async (req, res) => {
+app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const [existingUser] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
-        if (existingUser.length > 0) {
+        const [existingUsers] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+        if (existingUsers.length > 0) {
             return res.status(400).json({ message: 'Username already exists. Please choose another.' });
         }
 
@@ -28,12 +28,12 @@ app.post('http://localhost:3000/register', async (req, res) => {
 });
 
 // Login endpoint
-app.post('http://localhost:3000/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const [user] = await db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
-        if (user.length === 0) {
+        const [users] = await db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password]);
+        if (users.length === 0) {
             return res.status(400).json({ message: 'Invalid username or password.' });
         }
 
@@ -44,20 +44,19 @@ app.post('http://localhost:3000/login', async (req, res) => {
     }
 });
 
-app.post('http://localhost:3000/save-location', async (req, res) => {
+// Save location endpoint
+app.post('/save-location', async (req, res) => {
     const { latitude, longitude, name, address, description } = req.body;
 
     try {
-        // Insert the location into the database with additional fields
         const result = await db.query(
             'INSERT INTO locations (latitude, longitude, name, address, description) VALUES (?, ?, ?, ?, ?)',
             [latitude, longitude, name, address, description]
         );
 
-        // Respond with the ID of the newly created location
-        res.status(201).json({ 
-            message: 'Location saved successfully!', 
-            id: result.insertId, // Assuming result.insertId contains the ID of the new record
+        res.status(201).json({
+            message: 'Location saved successfully!',
+            id: result[0].insertId, // Extracting from the result of the query
             location: {
                 latitude,
                 longitude,
@@ -73,7 +72,7 @@ app.post('http://localhost:3000/save-location', async (req, res) => {
 });
 
 // Fetch all saved locations
-app.get('http://localhost:3000/locations', async (req, res) => {
+app.get('/locations', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT latitude, longitude FROM locations');
         res.status(200).json(rows);
@@ -84,7 +83,7 @@ app.get('http://localhost:3000/locations', async (req, res) => {
 });
 
 // Get location details by ID
-app.get('http://localhost:3000/get-location/:id', async (req, res) => {
+app.get('/get-location/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
