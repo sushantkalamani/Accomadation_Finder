@@ -2,25 +2,32 @@ import { useEffect } from "react";
 import { Accommodation } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Plus, Home } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, DivIcon } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Create custom marker icons using HTML/CSS for better styling control
+// Create custom marker icons for accommodations
+const markerHtmlStyles = (isSelected: boolean) => `
+  background-color: #FF5A5F;
+  width: ${isSelected ? '30px' : '24px'};
+  height: ${isSelected ? '30px' : '24px'};
+  display: block;
+  left: 0;
+  top: 0;
+  position: relative;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  transform: ${isSelected ? 'scale(1.2)' : 'scale(1)'};
+  transition: transform 0.2s;
+`;
+
 const createCustomIcon = (isSelected: boolean) => {
   return L.divIcon({
-    className: "custom-marker-icon", // This avoids inheriting leaflet's styles
-    html: `
-      <div class="${isSelected ? 'w-8 h-8' : 'w-6 h-6'} bg-[#FF5A5F] rounded-full flex items-center justify-center shadow-md transform ${isSelected ? 'scale-125' : 'scale-100'} transition-transform">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-      </div>
-    `,
-    iconSize: [isSelected ? 32 : 24, isSelected ? 32 : 24],
-    iconAnchor: [isSelected ? 16 : 12, isSelected ? 32 : 24],
-    popupAnchor: [0, -20],
+    className: "my-custom-pin",
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -24],
+    html: `<span style="${markerHtmlStyles(isSelected)}" />`
   });
 };
 
@@ -91,12 +98,14 @@ export function MapView({
         center={defaultPosition}
         zoom={12}
         style={{ height: "100%", width: "100%" }}
-        className="z-0"
+        className="z-0 rounded-lg shadow-md"
+        zoomControl={false} // We'll add our custom zoom control position
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <ZoomControl position="bottomleft" />
         
         {/* Map event handlers */}
         <MapEvents onClick={onMapClick} />
