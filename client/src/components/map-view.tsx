@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Accommodation } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { Plus, Home } from "lucide-react";
+import { Plus, Home, Info, X, Phone } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -104,6 +105,10 @@ export function MapView({
   onAddAccommodation,
   searchLocation,
 }: MapViewProps) {
+  // State for details dialog
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [detailsAccommodation, setDetailsAccommodation] = useState<Accommodation | null>(null);
+  
   // Default center position (Solapur, Maharashtra, India)
   const defaultPosition: [number, number] = [17.6599, 75.9064];
   
@@ -145,6 +150,18 @@ export function MapView({
                 <p className="text-xs text-[#FF5A5F] font-medium mt-1">
                   ₹{accommodation.price.toLocaleString('en-IN')} / month
                 </p>
+                <Button
+                  variant="outline" 
+                  size="sm"
+                  className="w-full mt-2 text-xs h-7 flex items-center justify-center gap-1 border-[#FF5A5F] text-[#FF5A5F] hover:bg-[#FFF5F5]"
+                  onClick={() => {
+                    setDetailsAccommodation(accommodation);
+                    setIsDetailsOpen(true);
+                  }}
+                >
+                  <Info className="h-3 w-3" />
+                  More Info
+                </Button>
               </div>
             </Popup>
           </Marker>
@@ -160,6 +177,71 @@ export function MapView({
           <Plus className="h-6 w-6" />
         </Button>
       </div>
+      
+      {/* Accommodation Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-neutral-900">
+              {detailsAccommodation?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Complete details about this accommodation
+            </DialogDescription>
+          </DialogHeader>
+          
+          {detailsAccommodation && (
+            <div className="space-y-4 py-2">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-sm font-medium text-neutral-500 mb-1">Location</h3>
+                <p className="text-neutral-900">{detailsAccommodation.address}</p>
+                <div className="mt-2 text-xs text-neutral-500">
+                  Coordinates: {detailsAccommodation.latitude.toFixed(6)}, {detailsAccommodation.longitude.toFixed(6)}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-neutral-500 mb-1">Price</h3>
+                  <p className="text-lg font-semibold text-[#FF5A5F]">₹{detailsAccommodation.price.toLocaleString('en-IN')}</p>
+                  <p className="text-xs text-neutral-500">per month</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-neutral-500 mb-1">Rooms</h3>
+                  <p className="text-lg font-semibold text-neutral-900">{detailsAccommodation.rooms}</p>
+                  <p className="text-xs text-neutral-500">{detailsAccommodation.rooms === 1 ? 'room' : 'rooms'}</p>
+                </div>
+              </div>
+              
+              {detailsAccommodation.description && (
+                <div>
+                  <h3 className="text-sm font-medium text-neutral-500 mb-1">Description</h3>
+                  <p className="text-neutral-900 text-sm">{detailsAccommodation.description}</p>
+                </div>
+              )}
+              
+              <div>
+                <h3 className="text-sm font-medium text-neutral-500 mb-1">Contact</h3>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full text-sm flex items-center justify-center gap-2"
+                  onClick={() => window.open(`tel:${detailsAccommodation.phone}`)}
+                >
+                  <Phone className="h-4 w-4" />
+                  {detailsAccommodation.phone}
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          <div className="flex justify-end">
+            <DialogClose asChild>
+              <Button variant="outline">Close</Button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
