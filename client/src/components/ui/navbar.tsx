@@ -4,11 +4,12 @@ import { User } from "@shared/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/hooks/use-auth";
+import { geocodeLocation } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search, Loader2 } from "lucide-react";
 
 const searchSchema = z.object({
   query: z.string().optional(),
@@ -21,13 +22,14 @@ type SearchValues = z.infer<typeof searchSchema>;
 
 interface NavbarProps {
   user: User;
-  onSearch: (values: SearchValues) => void;
+  onSearch: (values: SearchValues, location?: { lat: number, lng: number }) => void;
 }
 
 export function Navbar({ user, onSearch }: NavbarProps) {
   const { logoutMutation } = useAuth();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   
   const form = useForm<SearchValues>({
     resolver: zodResolver(searchSchema),
@@ -43,8 +45,17 @@ export function Navbar({ user, onSearch }: NavbarProps) {
     logoutMutation.mutate();
   };
   
-  const onSubmit = (data: SearchValues) => {
-    onSearch(data);
+  const onSubmit = async (data: SearchValues) => {
+    setIsSearching(true);
+    let location = null;
+    
+    // If there's a search query, try to geocode it
+    if (data.query) {
+      location = await geocodeLocation(data.query);
+    }
+    
+    onSearch(data, location);
+    setIsSearching(false);
     setShowFilters(false);
   };
   
@@ -89,8 +100,13 @@ export function Navbar({ user, onSearch }: NavbarProps) {
                           type="button"
                           onClick={form.handleSubmit(onSubmit)}
                           className="ml-2 p-1 rounded-full bg-[#FF5A5F] hover:bg-[#E00B41] h-8 w-8"
+                          disabled={isSearching}
                         >
-                          <Search className="h-4 w-4" />
+                          {isSearching ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Search className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </FormControl>

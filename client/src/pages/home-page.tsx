@@ -18,6 +18,7 @@ export default function HomePage() {
   const [selectedAccommodation, setSelectedAccommodation] = useState<Accommodation | null>(null);
   const [showAccommodationForm, setShowAccommodationForm] = useState(false);
   const [clickedLocation, setClickedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
   
   const handleSearch = async (params: SearchAccommodationParams) => {
     const results = await searchAccommodations(params);
