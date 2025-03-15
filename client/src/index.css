@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import leaflet CSS */
+@import 'leaflet/dist/leaflet.css';
+
 @layer base {
   * {
     @apply border-border;
@@ -10,4 +13,16 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+/* Fix Leaflet marker icon display issues */
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  display: block !important;
+}
+
+/* Make the map container take full height */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
 }

@@ -1,7 +1,32 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { Accommodation } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Home } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, DivIcon } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Create custom marker icons using HTML/CSS for better styling control
+const createCustomIcon = (isSelected: boolean) => {
+  return L.divIcon({
+    className: "custom-marker-icon", // This avoids inheriting leaflet's styles
+    html: `
+      <div class="${isSelected ? 'w-8 h-8' : 'w-6 h-6'} bg-[#FF5A5F] rounded-full flex items-center justify-center shadow-md transform ${isSelected ? 'scale-125' : 'scale-100'} transition-transform">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+    `,
+    iconSize: [isSelected ? 32 : 24, isSelected ? 32 : 24],
+    iconAnchor: [isSelected ? 16 : 12, isSelected ? 32 : 24],
+    popupAnchor: [0, -20],
+  });
+};
+
+// Default and selected icons
+const DefaultIcon = createCustomIcon(false);
+const SelectedIcon = createCustomIcon(true);
 
 interface MapViewProps {
   accommodations: Accommodation[];
@@ -11,11 +36,43 @@ interface MapViewProps {
   onAddAccommodation: () => void;
 }
 
-declare global {
-  interface Window {
-    google: any;
-    initMap: () => void;
-  }
+// MapEvents component to handle map clicks
+function MapEvents({ onClick }: { onClick: (lat: number, lng: number) => void }) {
+  useMapEvents({
+    click: (e) => {
+      onClick(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+}
+
+// CenterMap component to adjust view when selected accommodation changes
+function CenterMap({ accommodation }: { accommodation: Accommodation | null }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (accommodation) {
+      map.setView([accommodation.latitude, accommodation.longitude], 15);
+    }
+  }, [accommodation, map]);
+  
+  return null;
+}
+
+// FitBounds component to adjust view to show all markers
+function FitBounds({ accommodations }: { accommodations: Accommodation[] }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (accommodations.length > 0) {
+      const bounds = L.latLngBounds(accommodations.map(acc => [acc.latitude, acc.longitude]));
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }
+  }, [accommodations, map]);
+  
+  return null;
 }
 
 export function MapView({
@@ -25,118 +82,52 @@ export function MapView({
   onMapClick,
   onAddAccommodation,
 }: MapViewProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
+  // Default center position (New York)
+  const defaultPosition: [number, number] = [40.7128, -74.006];
   
-  // Initialize map
-  useEffect(() => {
-    // Check if Google Maps API is already loaded
-    if (window.google && window.google.maps) {
-      initializeMap();
-    } else {
-      // Define the callback function for the Google Maps API
-      window.initMap = initializeMap;
-      
-      // Load Google Maps API
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY || "AIzaSyA6GpUjTTW06nxS-LUNWjkZ6sXQHGvKO4g"}&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-      
-      return () => {
-        // Clean up the script and global callback
-        document.head.removeChild(script);
-        delete window.initMap;
-      };
-    }
-  }, []);
-  
-  // Function to initialize the map
-  const initializeMap = () => {
-    if (!mapRef.current) return;
-    
-    const newMap = new window.google.maps.Map(mapRef.current, {
-      center: { lat: 40.7128, lng: -74.006 }, // Default to New York
-      zoom: 12,
-      styles: [
-        {
-          featureType: "poi",
-          elementType: "labels",
-          stylers: [{ visibility: "off" }]
-        }
-      ]
-    });
-    
-    // Add click listener to the map
-    newMap.addListener("click", (event: google.maps.MapMouseEvent) => {
-      if (event.latLng) {
-        onMapClick(event.latLng.lat(), event.latLng.lng());
-      }
-    });
-    
-    setMap(newMap);
-  };
-  
-  // Update markers when accommodations change
-  useEffect(() => {
-    if (!map) return;
-    
-    // Clear existing markers
-    markers.forEach(marker => marker.setMap(null));
-    const newMarkers: google.maps.Marker[] = [];
-    
-    // Add markers for each accommodation
-    accommodations.forEach(accommodation => {
-      const marker = new window.google.maps.Marker({
-        position: { lat: accommodation.latitude, lng: accommodation.longitude },
-        map,
-        title: accommodation.name,
-        icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
-          fillColor: selectedAccommodation?.id === accommodation.id ? '#FC642D' : '#FF5A5F',
-          fillOpacity: 1,
-          strokeWeight: 2,
-          strokeColor: '#FFFFFF',
-          scale: selectedAccommodation?.id === accommodation.id ? 10 : 8,
-        },
-        animation: selectedAccommodation?.id === accommodation.id ? 
-          window.google.maps.Animation.BOUNCE : null
-      });
-      
-      marker.addListener("click", () => {
-        onMarkerClick(accommodation);
-      });
-      
-      newMarkers.push(marker);
-    });
-    
-    setMarkers(newMarkers);
-    
-    // If there's a selected accommodation, center the map on it
-    if (selectedAccommodation) {
-      map.setCenter({
-        lat: selectedAccommodation.latitude,
-        lng: selectedAccommodation.longitude
-      });
-      map.setZoom(15);
-    } else if (accommodations.length > 0) {
-      // Otherwise, fit bounds to show all markers
-      const bounds = new window.google.maps.LatLngBounds();
-      accommodations.forEach(acc => {
-        bounds.extend({ lat: acc.latitude, lng: acc.longitude });
-      });
-      map.fitBounds(bounds);
-    }
-  }, [accommodations, selectedAccommodation, map]);
-
   return (
     <div className="flex-1 relative">
-      <div ref={mapRef} className="absolute inset-0 z-0" />
+      <MapContainer
+        center={defaultPosition}
+        zoom={12}
+        style={{ height: "100%", width: "100%" }}
+        className="z-0"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        
+        {/* Map event handlers */}
+        <MapEvents onClick={onMapClick} />
+        {selectedAccommodation && <CenterMap accommodation={selectedAccommodation} />}
+        {accommodations.length > 0 && !selectedAccommodation && <FitBounds accommodations={accommodations} />}
+        
+        {/* Render accommodation markers */}
+        {accommodations.map((accommodation) => (
+          <Marker
+            key={accommodation.id}
+            position={[accommodation.latitude, accommodation.longitude]}
+            icon={selectedAccommodation?.id === accommodation.id ? SelectedIcon : DefaultIcon}
+            eventHandlers={{
+              click: () => onMarkerClick(accommodation),
+            }}
+          >
+            <Popup>
+              <div className="p-1">
+                <h3 className="font-medium text-sm">{accommodation.name}</h3>
+                <p className="text-xs text-neutral-500">{accommodation.address}</p>
+                <p className="text-xs text-[#FF5A5F] font-medium mt-1">
+                  ${accommodation.price.toFixed(2)} / night
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
       
       {/* Add New Accommodation Button */}
-      <div className="absolute bottom-6 right-6 z-10">
+      <div className="absolute bottom-6 right-6 z-[1000]">
         <Button 
           onClick={onAddAccommodation}
           className="rounded-full h-14 w-14 p-0 bg-[#FF5A5F] hover:bg-[#E00B41]"
