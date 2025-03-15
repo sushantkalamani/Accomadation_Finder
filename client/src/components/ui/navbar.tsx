@@ -54,7 +54,7 @@ export function Navbar({ user, onSearch }: NavbarProps) {
       location = await geocodeLocation(data.query);
     }
     
-    onSearch(data, location);
+    onSearch(data, location || undefined);
     setIsSearching(false);
     setShowFilters(false);
   };
