@@ -17,10 +17,19 @@ interface AccommodationFormProps {
   onClose: () => void;
 }
 
-// Create form schema based on accommodation schema
+// Create form schema based on accommodation schema with additional validation
 const formSchema = insertAccommodationSchema.omit({ 
   id: true, 
   userId: true 
+}).extend({
+  // Add Indian phone number validation (10 digits)
+  phone: z.string()
+    .min(10, "Phone number must be at least 10 digits")
+    .max(10, "Phone number must be exactly 10 digits")
+    .regex(/^[0-9]{10}$/, "Phone number must be 10 digits")
+    .refine((value) => /^[6-9][0-9]{9}$/.test(value), {
+      message: "Phone number must be a valid Indian mobile number starting with 6, 7, 8, or 9"
+    })
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -158,7 +167,7 @@ export function AccommodationForm({
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price per Night ($)</FormLabel>
+                    <FormLabel>Price per Month (₹)</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 

@@ -89,8 +89,8 @@ export function MapView({
   onMapClick,
   onAddAccommodation,
 }: MapViewProps) {
-  // Default center position (New York)
-  const defaultPosition: [number, number] = [40.7128, -74.006];
+  // Default center position (Solapur, Maharashtra, India)
+  const defaultPosition: [number, number] = [17.6599, 75.9064];
   
   return (
     <div className="flex-1 relative">
@@ -127,7 +127,7 @@ export function MapView({
                 <h3 className="font-medium text-sm">{accommodation.name}</h3>
                 <p className="text-xs text-neutral-500">{accommodation.address}</p>
                 <p className="text-xs text-[#FF5A5F] font-medium mt-1">
-                  ${accommodation.price.toFixed(2)} / night
+                  ₹{accommodation.price.toLocaleString('en-IN')} / month
                 </p>
               </div>
             </Popup>
