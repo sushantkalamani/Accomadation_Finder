@@ -1,0 +1,27 @@
+"I need to build a professional-level Room Accommodation System that includes the following features:
+
+Landing Page (Login Page):
+
+The system should have a login page that allows users to either log in or sign up.
+The page should include two sections: one for logging in (email/username and password) and another for new users to sign up (name, email, password, and confirm password).
+The user interface should be clean, user-friendly, and professional in design.
+Upon successful login, the system should redirect the user to a map-based accommodation page.
+Map Page:
+
+The main feature should be an interactive map that allows users to add accommodation pins.
+On clicking a pin, it should display a form to enter and save details about that location (e.g., number of rooms, cost per room, phone number, address, etc.).
+When the user saves the location, the pin with its associated details should be stored in a database.
+Users should be able to click on any saved pin on the map to view the saved details of that accommodation.
+Search Bar:
+
+Include a search bar that allows users to search for accommodation based on location, cost, or other filters.
+When a user clicks a search result, the map should zoom in to the corresponding location and highlight the pin for that accommodation.
+The search results should dynamically update based on user input, and results should match criteria like location, cost range, and room availability.
+User Experience & Professional Design:
+
+The overall system should have a modern and intuitive design. The layout should be responsive and optimized for both desktop and mobile views.
+The map interface should be interactive and visually appealing, with smooth transitions and animations.
+Database Integration:
+
+Design the system to store accommodation details (name, number of rooms, cost, phone number, address, etc.) in a database. The system should also support user authentication (login/signup) with secure password storage.
+All the accommodation data and user information should be retrievable and updateable.
