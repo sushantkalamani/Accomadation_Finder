@@ -202,8 +202,16 @@ export function Navbar({ user, onSearch }: NavbarProps) {
                       type="button"
                       className="text-sm h-8 bg-[#FF5A5F] hover:bg-[#E00B41]"
                       onClick={form.handleSubmit(onSubmit)}
+                      disabled={isSearching}
                     >
-                      Apply
+                      {isSearching ? (
+                        <span className="flex items-center">
+                          <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                          Searching...
+                        </span>
+                      ) : (
+                        "Apply"
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -269,8 +277,13 @@ export function Navbar({ user, onSearch }: NavbarProps) {
                 type="button"
                 onClick={form.handleSubmit(onSubmit)}
                 className="ml-2 p-1 rounded-full bg-[#FF5A5F] hover:bg-[#E00B41] h-8 w-8"
+                disabled={isSearching}
               >
-                <Search className="h-4 w-4" />
+                {isSearching ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </Form>

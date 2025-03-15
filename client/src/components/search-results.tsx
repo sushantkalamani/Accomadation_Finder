@@ -10,7 +10,7 @@ interface SearchResultsProps {
 
 export function SearchResults({ results, onResultClick, onClose }: SearchResultsProps) {
   return (
-    <div className="md:w-1/3 lg:w-1/4 bg-white shadow-md border-r border-neutral-200 p-4 overflow-y-auto z-10 h-full">
+    <div className="absolute md:relative top-0 left-0 right-0 md:w-1/3 lg:w-1/4 bg-white shadow-md border-r border-neutral-200 p-4 overflow-y-auto z-10 h-full md:h-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-medium text-neutral-900">Search Results</h2>
         <div className="flex items-center">
@@ -18,7 +18,7 @@ export function SearchResults({ results, onResultClick, onClose }: SearchResults
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-8 w-8" 
+            className="h-8 w-8 hover:bg-gray-100" 
             onClick={onClose}
             aria-label="Close search results"
           >
@@ -27,12 +27,24 @@ export function SearchResults({ results, onResultClick, onClose }: SearchResults
         </div>
       </div>
       
+      {/* Mobile Close Button - Fixed at bottom */}
+      <div className="md:hidden fixed bottom-4 left-0 right-0 flex justify-center">
+        <Button 
+          onClick={onClose}
+          className="bg-[#FF5A5F] hover:bg-[#E00B41] px-6 py-2 rounded-full text-white shadow-lg"
+        >
+          Close Results
+        </Button>
+      </div>
+      
       {results.length === 0 ? (
-        <div className="text-center py-8 text-neutral-500">
-          No accommodations found matching your search criteria.
+        <div className="text-center py-8 text-neutral-500 pb-16 md:pb-0">
+          <div className="mb-2">🏠</div>
+          <p>No accommodations found matching your search criteria.</p>
+          <p className="text-sm mt-2">Try adjusting your filters or searching a different location.</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 pb-16 md:pb-0">
           {results.map((accommodation) => (
             <div 
               key={accommodation.id}

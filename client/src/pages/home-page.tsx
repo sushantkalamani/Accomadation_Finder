@@ -20,14 +20,21 @@ export default function HomePage() {
   const [clickedLocation, setClickedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
   
-  const handleSearch = async (params: SearchAccommodationParams) => {
+  const handleSearch = async (params: SearchAccommodationParams, location?: { lat: number, lng: number }) => {
     const results = await searchAccommodations(params);
+    
+    // Set the search location if provided
+    if (location) {
+      setSearchLocation(location);
+    }
+    
     setSearchResults(results);
     setShowSearchResults(true);
   };
   
   const handleResultClick = (accommodation: Accommodation) => {
     setSelectedAccommodation(accommodation);
+    setSearchLocation(null); // Clear search location when selecting a specific accommodation
   };
   
   const handleMapClick = (lat: number, lng: number) => {
@@ -37,6 +44,7 @@ export default function HomePage() {
   
   const handleMarkerClick = (accommodation: Accommodation) => {
     setSelectedAccommodation(accommodation);
+    setSearchLocation(null); // Clear search location when clicking a marker
   };
   
   const handleAddAccommodation = () => {
@@ -80,6 +88,7 @@ export default function HomePage() {
           onMarkerClick={handleMarkerClick} 
           onMapClick={handleMapClick}
           onAddAccommodation={handleAddAccommodation}
+          searchLocation={searchLocation}
         />
         
         {showAccommodationForm && (
