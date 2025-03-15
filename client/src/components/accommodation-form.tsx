@@ -191,7 +191,7 @@ export function AccommodationForm({
                 <FormItem>
                   <FormLabel>Contact Phone</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. (123) 456-7890" {...field} />
+                    <Input placeholder="e.g. 9876543210" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

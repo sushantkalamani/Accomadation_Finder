@@ -41,6 +41,7 @@ interface MapViewProps {
   onMarkerClick: (accommodation: Accommodation) => void;
   onMapClick: (lat: number, lng: number) => void;
   onAddAccommodation: () => void;
+  searchLocation?: { lat: number, lng: number } | null;
 }
 
 // MapEvents component to handle map clicks
@@ -62,6 +63,19 @@ function CenterMap({ accommodation }: { accommodation: Accommodation | null }) {
       map.setView([accommodation.latitude, accommodation.longitude], 15);
     }
   }, [accommodation, map]);
+  
+  return null;
+}
+
+// SearchLocationMap component to adjust view to search location
+function SearchLocationMap({ location }: { location: { lat: number, lng: number } | null | undefined }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (location) {
+      map.setView([location.lat, location.lng], 15);
+    }
+  }, [location, map]);
   
   return null;
 }
@@ -88,6 +102,7 @@ export function MapView({
   onMarkerClick,
   onMapClick,
   onAddAccommodation,
+  searchLocation,
 }: MapViewProps) {
   // Default center position (Solapur, Maharashtra, India)
   const defaultPosition: [number, number] = [17.6599, 75.9064];
@@ -110,7 +125,8 @@ export function MapView({
         {/* Map event handlers */}
         <MapEvents onClick={onMapClick} />
         {selectedAccommodation && <CenterMap accommodation={selectedAccommodation} />}
-        {accommodations.length > 0 && !selectedAccommodation && <FitBounds accommodations={accommodations} />}
+        {!selectedAccommodation && searchLocation && <SearchLocationMap location={searchLocation} />}
+        {accommodations.length > 0 && !selectedAccommodation && !searchLocation && <FitBounds accommodations={accommodations} />}
         
         {/* Render accommodation markers */}
         {accommodations.map((accommodation) => (

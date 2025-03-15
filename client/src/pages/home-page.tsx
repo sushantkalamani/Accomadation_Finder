@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { MapView } from "@/components/map-view";
 import { AccommodationForm } from "@/components/accommodation-form";
@@ -7,6 +7,7 @@ import { useAccommodations } from "@/hooks/use-accommodations";
 import { SearchResults } from "@/components/search-results";
 import { Accommodation, SearchAccommodationParams } from "@shared/schema";
 import { Loader2 } from "lucide-react";
+import { Map } from "leaflet";
 
 export default function HomePage() {
   const { user } = useAuth();

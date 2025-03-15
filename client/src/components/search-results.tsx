@@ -18,8 +18,9 @@ export function SearchResults({ results, onResultClick, onClose }: SearchResults
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-8 w-8 md:hidden" 
+            className="h-8 w-8" 
             onClick={onClose}
+            aria-label="Close search results"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -41,7 +42,7 @@ export function SearchResults({ results, onResultClick, onClose }: SearchResults
               <h3 className="font-medium text-neutral-900">{accommodation.name}</h3>
               <p className="text-sm text-neutral-500">{accommodation.address}</p>
               <div className="flex justify-between items-center mt-2">
-                <div className="text-[#FF5A5F] font-medium">${accommodation.price.toFixed(2)} / night</div>
+                <div className="text-[#FF5A5F] font-medium">₹{accommodation.price.toLocaleString('en-IN')} / month</div>
                 <div className="text-sm text-neutral-500">{accommodation.rooms} {accommodation.rooms === 1 ? 'room' : 'rooms'}</div>
               </div>
             </div>
