@@ -82,16 +82,16 @@ export function Navbar({ user, onSearch }: NavbarProps) {
           <h1 className="text-xl font-bold text-[#FF5A5F] mr-4">RoomFinder</h1>
           
           <Form {...form}>
-            <div className="relative hidden md:block">
+            <div className="relative hidden md:block flex-1 max-w-2xl mx-4">
               <FormField
                 control={form.control}
                 name="query"
                 render={({ field }) => (
                   <FormItem className="m-0">
                     <FormControl>
-                      <div className="flex items-center border border-neutral-200 rounded-full px-4 py-2 bg-white shadow-sm">
+                      <div className="flex items-center border border-neutral-200 rounded-full px-5 py-2.5 bg-white shadow-sm">
                         <Input
-                          className="border-0 focus-visible:ring-0 focus-visible:outline-none px-0 shadow-none"
+                          className="border-0 focus-visible:ring-0 focus-visible:outline-none px-0 shadow-none text-base h-9"
                           placeholder="Search location, price, or facilities..."
                           {...field}
                           onFocus={() => setShowFilters(true)}
@@ -99,13 +99,13 @@ export function Navbar({ user, onSearch }: NavbarProps) {
                         <Button
                           type="button"
                           onClick={form.handleSubmit(onSubmit)}
-                          className="ml-2 p-1 rounded-full bg-[#FF5A5F] hover:bg-[#E00B41] h-8 w-8"
+                          className="ml-2 p-1 rounded-full bg-[#FF5A5F] hover:bg-[#E00B41] h-9 w-9"
                           disabled={isSearching}
                         >
                           {isSearching ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Loader2 className="h-5 w-5 animate-spin" />
                           ) : (
-                            <Search className="h-4 w-4" />
+                            <Search className="h-5 w-5" />
                           )}
                         </Button>
                       </div>
@@ -257,7 +257,7 @@ export function Navbar({ user, onSearch }: NavbarProps) {
       {showMobileSearch && (
         <div className="md:hidden px-4 pb-3">
           <Form {...form}>
-            <div className="flex items-center border border-neutral-200 rounded-full px-4 py-2 bg-white shadow-sm">
+            <div className="flex items-center border border-neutral-200 rounded-full px-5 py-2.5 bg-white shadow-sm">
               <FormField
                 control={form.control}
                 name="query"
@@ -265,9 +265,10 @@ export function Navbar({ user, onSearch }: NavbarProps) {
                   <FormItem className="m-0 flex-1">
                     <FormControl>
                       <Input
-                        className="border-0 focus-visible:ring-0 focus-visible:outline-none px-0 shadow-none"
+                        className="border-0 focus-visible:ring-0 focus-visible:outline-none px-0 shadow-none text-base h-9"
                         placeholder="Search location, price, or facilities..."
                         {...field}
+                        onFocus={() => setShowFilters(true)}
                       />
                     </FormControl>
                   </FormItem>
@@ -276,16 +277,119 @@ export function Navbar({ user, onSearch }: NavbarProps) {
               <Button
                 type="button"
                 onClick={form.handleSubmit(onSubmit)}
-                className="ml-2 p-1 rounded-full bg-[#FF5A5F] hover:bg-[#E00B41] h-8 w-8"
+                className="ml-2 p-1 rounded-full bg-[#FF5A5F] hover:bg-[#E00B41] h-9 w-9"
                 disabled={isSearching}
               >
                 {isSearching ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <Search className="h-4 w-4" />
+                  <Search className="h-5 w-5" />
                 )}
               </Button>
             </div>
+            
+            {showFilters && (
+              <div className="mt-2 bg-white rounded-lg shadow-lg p-4 w-full">
+                <h3 className="text-neutral-900 font-medium mb-3">Filters</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-500 mb-1">
+                      Price Range
+                    </label>
+                    <div className="flex space-x-2">
+                      <FormField
+                        control={form.control}
+                        name="priceMin"
+                        render={({ field }) => (
+                          <FormItem className="m-0 flex-1">
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Min"
+                                className="text-sm"
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                                value={field.value === undefined ? "" : field.value}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="priceMax"
+                        render={({ field }) => (
+                          <FormItem className="m-0 flex-1">
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Max"
+                                className="text-sm"
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                                value={field.value === undefined ? "" : field.value}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-500 mb-1">
+                      Rooms
+                    </label>
+                    <FormField
+                      control={form.control}
+                      name="rooms"
+                      render={({ field }) => (
+                        <FormItem className="m-0">
+                          <FormControl>
+                            <select
+                              className="w-full p-2 border rounded-md text-sm"
+                              {...field}
+                              onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value, 10) : undefined)}
+                              value={field.value === undefined ? "" : field.value}
+                            >
+                              <option value="">Any</option>
+                              <option value="1">1+</option>
+                              <option value="2">2+</option>
+                              <option value="3">3+</option>
+                              <option value="4">4+</option>
+                            </select>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="mr-2 text-sm h-8"
+                    onClick={resetFilters}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    type="button"
+                    className="text-sm h-8 bg-[#FF5A5F] hover:bg-[#E00B41]"
+                    onClick={form.handleSubmit(onSubmit)}
+                    disabled={isSearching}
+                  >
+                    {isSearching ? (
+                      <span className="flex items-center">
+                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                        Searching...
+                      </span>
+                    ) : (
+                      "Apply"
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
           </Form>
         </div>
       )}

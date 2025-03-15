@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { MapView } from "@/components/map-view";
 import { AccommodationForm } from "@/components/accommodation-form";
@@ -7,6 +7,7 @@ import { useAccommodations } from "@/hooks/use-accommodations";
 import { SearchResults } from "@/components/search-results";
 import { Accommodation, SearchAccommodationParams } from "@shared/schema";
 import { Loader2 } from "lucide-react";
+import { geocodeLocation } from "@/lib/utils";
 import { Map } from "leaflet";
 
 export default function HomePage() {
@@ -21,15 +22,32 @@ export default function HomePage() {
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
   
   const handleSearch = async (params: SearchAccommodationParams, location?: { lat: number, lng: number }) => {
-    const results = await searchAccommodations(params);
+    setShowSearchResults(true); // Show results container immediately
     
-    // Set the search location if provided
-    if (location) {
-      setSearchLocation(location);
+    try {
+      // Attempt to geocode from the search query if no location is provided
+      let searchLoc = location;
+      if (!searchLoc && params.query) {
+        const geocoded = await geocodeLocation(params.query);
+        if (geocoded) {
+          searchLoc = geocoded;
+        }
+      }
+      
+      // Always update the search location if we have coordinates
+      if (searchLoc) {
+        setSearchLocation(searchLoc);
+      }
+      
+      // Get and display search results
+      const results = await searchAccommodations(params);
+      setSearchResults(results);
+      
+      // Clear selected accommodation when searching
+      setSelectedAccommodation(null);
+    } catch (error) {
+      console.error("Search error:", error);
     }
-    
-    setSearchResults(results);
-    setShowSearchResults(true);
   };
   
   const handleResultClick = (accommodation: Accommodation) => {
