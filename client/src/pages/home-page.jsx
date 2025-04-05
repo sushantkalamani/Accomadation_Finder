@@ -20,7 +20,7 @@ export default function HomePage() {
   const [searchLocation, setSearchLocation] = useState(null);
   
   const handleSearch = async (params, location) => {
-    setShowSearchResults(true); // Show results container immediately
+    // setShowSearchResults(true); // Commented out to prevent sidebar from showing
     
     try {
       // Attempt to geocode from the search query if no location is provided

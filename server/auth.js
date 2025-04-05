@@ -1,9 +1,10 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
+import connectMongo from "connect-mongo";
+import { ObjectId } from "mongodb";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { storage } from "./storage.js";
 
 const scryptAsync = promisify(scrypt);
 
@@ -20,12 +21,18 @@ async function comparePasswords(supplied, stored) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
-export function setupAuth(app) {
+export function setupAuth(app, db, clientPromise) {
+  const sessionStore = connectMongo.create({
+    clientPromise: clientPromise,
+    collectionName: "sessions",
+    stringify: false,
+  });
+
   const sessionSettings = {
     secret: process.env.SESSION_SECRET || "room-accommodation-secret",
     resave: false,
     saveUninitialized: false,
-    store: storage.sessionStore,
+    store: sessionStore,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     }
@@ -42,7 +49,7 @@ export function setupAuth(app) {
       passwordField: 'password'
     }, async (email, password, done) => {
       try {
-        const user = await storage.getUserByEmail(email);
+        const user = await db.collection("users").findOne({ email });
         if (!user || !(await comparePasswords(password, user.password))) {
           return done(null, false, { message: "Invalid email or password" });
         }
@@ -53,10 +60,10 @@ export function setupAuth(app) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => done(null, user._id.toString()));
   passport.deserializeUser(async (id, done) => {
     try {
-      const user = await storage.getUser(id);
+      const user = await db.collection("users").findOne({ _id: new ObjectId(id) });
       done(null, user);
     } catch (error) {
       done(error);
@@ -71,19 +78,21 @@ export function setupAuth(app) {
         return res.status(400).json({ message: "All fields are required" });
       }
       
-      const existingUser = await storage.getUserByEmail(email);
+      const existingUser = await db.collection("users").findOne({ email });
       if (existingUser) {
         return res.status(400).json({ message: "Email already in use" });
       }
 
       const hashedPassword = await hashPassword(password);
-      const user = await storage.createUser({
+      const result = await db.collection("users").insertOne({
         email,
         name,
         password: hashedPassword,
       });
+      
+      const user = await db.collection("users").findOne({ _id: result.insertedId });
+      if (!user) { throw new Error("User creation failed after insert"); }
 
-      // Remove password from response
       const userResponse = { ...user };
       delete userResponse.password;
 
@@ -109,7 +118,6 @@ export function setupAuth(app) {
           return next(err);
         }
         
-        // Remove password from response
         const userResponse = { ...user };
         delete userResponse.password;
         
@@ -130,7 +138,6 @@ export function setupAuth(app) {
       return res.status(401).json({ message: "Not authenticated" });
     }
     
-    // Remove password from response
     const userResponse = { ...req.user };
     delete userResponse.password;
     

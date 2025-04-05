@@ -16,7 +16,8 @@ import { useToast } from "@/hooks/use-toast.js";
 // Create form schema based on accommodation schema with additional validation
 const formSchema = insertAccommodationSchema.omit({
   id: true,
-  userId: true
+  userId: true,
+  // photos: true // No longer needed
 }).extend({
   // Add Indian phone number validation (10 digits)
   phone: z.string()
@@ -36,10 +37,10 @@ export function AccommodationForm({
   const { user } = useAuth();
   const { createAccommodationMutation, updateAccommodationMutation } = useAccommodations();
   const { toast } = useToast();
+  // const [selectedFiles, setSelectedFiles] = useState([]); // Remove file state
   
   const isEditing = !!accommodation;
   
-  // Initialize form with existing data or defaults
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: isEditing ? {
@@ -62,25 +63,34 @@ export function AccommodationForm({
       longitude: initialLocation?.lng || 0,
     },
   });
+
+  // Remove handleFileChange
+  // const handleFileChange = ...
   
-  const onSubmit = (data) => {
+  // Revert onSubmit to send plain JSON
+  const onSubmit = (data) => { 
     if (!user) return;
+
+    // Remove FormData logic
+    // const formData = ...
+    // Object.keys(data).forEach ...
+    // if (!isEditing) { selectedFiles.forEach ... }
     
     if (isEditing && accommodation) {
       updateAccommodationMutation.mutate({
         id: accommodation.id,
-        accommodation: {
-          ...data,
-          userId: user.id
-        }
+        accommodation: data 
       }, {
         onSuccess: onClose
       });
     } else {
-      createAccommodationMutation.mutate({
-        ...data,
-        userId: user.id
-      }, {
+      // Send plain JS object for creation, including userId
+      createAccommodationMutation.mutate({ 
+        ...data, 
+        // Assuming useAuth provides user._id correctly here
+        // If not, adjust based on actual user object structure
+        userId: user?._id // Add userId directly if needed by backend/mutation hook
+      }, { 
         onSuccess: onClose
       });
     }
@@ -90,7 +100,7 @@ export function AccommodationForm({
   
   return (
     <Dialog open={true} onOpenChange={() => !isPending && onClose()}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader className="border-b pb-4">
           <DialogTitle className="text-xl font-bold">
             {isEditing ? "Edit Accommodation" : "Add New Accommodation"}
@@ -211,6 +221,9 @@ export function AccommodationForm({
               )}
             />
             
+            {/* --- Remove Photo Upload Field --- */}
+            {/* {!isEditing && ( ... remove entire block ... )} */}
+            
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -253,7 +266,7 @@ export function AccommodationForm({
               />
             </div>
             
-            <DialogFooter className="mt-6">
+            <DialogFooter className="pt-4">
               <Button
                 type="button"
                 variant="outline"

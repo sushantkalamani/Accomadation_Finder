@@ -11,7 +11,9 @@ export default {
   plugins: [
     react(),
     runtimeErrorOverlay(),
-    themePlugin(),
+    themePlugin({
+      themeFilePath: path.resolve(__dirname, "client", "theme.json")
+    }),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
@@ -32,4 +34,12 @@ export default {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      }
+    }
+  }
 };
