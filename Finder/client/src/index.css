@@ -1,0 +1,69 @@
+/* Import leaflet CSS */
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Fix Leaflet marker icon display issues */
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  display: block !important;
+}
+
+/* Make the map container take full height */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
+/* Custom zoom control styling */
+.leaflet-control-zoom {
+  border: none !important;
+  margin: 0 0 15px 15px !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: white !important;
+  border-radius: 8px !important;
+  color: #555 !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  margin-bottom: 5px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f0f0f0 !important;
+  color: #222 !important;
+}
+
+/* Custom popup styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 10px !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15) !important;
+}
+
+.leaflet-popup-content {
+  margin: 10px 12px !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15) !important;
+}
